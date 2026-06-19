@@ -20,7 +20,7 @@ app.set('view engine', 'ejs');
 // Routes komen hierna...
 
 // Homepagina
-app.get('/', (req, res) => {
+app.get('/home', (req, res) => {
   res.render('index');   // laadt views/index.ejs
 });
 
