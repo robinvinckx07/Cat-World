@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="CSS/opties.css">
+    <link rel="stylesheet" href="CSS/header_footer.css">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/x-icon" href="/img/Cat_World_Icon.ico">
+    <title>Cat World - Opties</title>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-container">
+            <a href="/" class="logo">Cat <span>World</span> 🐱</a>
+            <nav class="nav-menu">
+                <a href="/" class="nav-item">Home</a>
+                <a href="/Facts.html" class="nav-item">Feitjes & Rassen</a>
+                <a href="/Opties.html" class="nav-item">Opties</a>
+                <button id="pwa-install-btn" class="nav-item install-btn" style="display: none;">Installeer App</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="options-container">
+        <h1>Instellingen & Opties</h1>
+        <p class="subtitle">Pas jouw Cat World ervaring aan naar eigen wens.</p>
+
+        <div class="options-card">
+            
+            <div class="option-row">
+                <div class="option-info">
+                    <h3>Weergave (Dark Mode)</h3>
+                    <p>Wissel tussen de lichte (oranje/wit) en de donkere weergave.</p>
+                </div>
+                <div class="option-control">
+                    <label class="switch">
+                        <input type="checkbox" id="dark-mode-toggle" onchange="toggleDarkMode()">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="option-row">
+                <div class="option-info">
+                    <h3>Taal / Language</h3>
+                    <p>Verander de taal van de knoppen en menu's (de feitjes-API blijft Engels).</p>
+                </div>
+                <div class="option-control">
+                    <select id="language-select" onchange="changeLanguage()">
+                        <option value="nl">Nederlands 🇳🇱</option>
+                        <option value="en">English 🇬🇧</option>
+                    </select>
+                </div>
+            </div>
+
+            <hr class="divider">
+
+            <div class="option-row">
+                <div class="option-info">
+                    <h3>Fabrieksinstellingen</h3>
+                    <p>Wis alle opgeslagen voorkeuren en zet de website terug naar de basis.</p>
+                </div>
+                <div class="option-control">
+                    <button class="reset-btn" onclick="resetSettings()">Reset Instellingen</button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-container">
+            <p id="footer-text">&copy; Gemaakt door Robin Vinckx 🐾</p>
+        </div>
+    </footer>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const isDarkMode = localStorage.getItem('darkMode') === 'enabled';
+            document.getElementById('dark-mode-toggle').checked = isDarkMode;
+            if (isDarkMode) document.body.classList.add('dark-theme');
+
+            const savedLang = localStorage.getItem('siteLanguage') || 'nl';
+            document.getElementById('language-select').value = savedLang;
+            applyLanguageStrings(savedLang);
+            vertaalNavigatie(savedLang);
+            vertaalFooter(savedLang);
+        });
+
+        function vertaalNavigatie(lang) {
+            const navItems = document.querySelectorAll('.nav-menu .nav-item');
+            const installBtn = document.getElementById('pwa-install-btn');
+            if (lang === 'en' && navItems.length >= 3) {
+                navItems[0].textContent = "Home";
+                navItems[1].textContent = "Facts & Breeds";
+                navItems[2].textContent = "Settings";
+                if (installBtn) installBtn.textContent = "Install App";
+            }
+        }
+
+        function vertaalFooter(lang) {
+            const footerP = document.getElementById('footer-text');
+            if (lang === 'en' && footerP) {
+                footerP.innerHTML = "&copy; Made by Robin Vinckx 🐾";
+            }
+        }
+
+        function toggleDarkMode() {
+            const checkbox = document.getElementById('dark-mode-toggle');
+            if (checkbox.checked) {
+                document.body.classList.add('dark-theme');
+                localStorage.setItem('darkMode', 'enabled');
+            } else {
+                document.body.classList.remove('dark-theme');
+                localStorage.setItem('darkMode', 'disabled');
+            }
+        }
+
+        function changeLanguage() {
+            const selectedLang = document.getElementById('language-select').value;
+            localStorage.setItem('siteLanguage', selectedLang);
+            applyLanguageStrings(selectedLang);
+        }
+
+        function applyLanguageStrings(lang) {
+            const title = document.querySelector('h1');
+            const subtitle = document.querySelector('.subtitle');
+            const headers = document.querySelectorAll('.option-info h3');
+            const paragraphs = document.querySelectorAll('.option-info p');
+            const resetBtn = document.querySelector('.reset-btn');
+            
+            if (lang === 'en') {
+                title.textContent = "Settings & Options";
+                subtitle.textContent = "Customize your Cat World experience to your liking.";
+                headers[0].textContent = "Display (Dark Mode)";
+                paragraphs[0].textContent = "Toggle between the light (orange/white) and dark display.";
+                headers[1].textContent = "Language / Taal";
+                paragraphs[1].textContent = "Change the language of buttons and menus (API data remains English).";
+                headers[2].textContent = "Factory Reset";
+                paragraphs[2].textContent = "Clear all saved preferences and restore the website to default.";
+                resetBtn.textContent = "Reset Settings";
+            } else {
+                title.textContent = "Instellingen & Opties";
+                subtitle.textContent = "Pas jouw Cat World ervaring aan naar eigen wens.";
+                headers[0].textContent = "Weergave (Dark Mode)";
+                paragraphs[0].textContent = "Wissel tussen de lichte (oranje/wit) en de donkere weergave.";
+                headers[1].textContent = "Taal / Language";
+                paragraphs[1].textContent = "Verander de taal van de knoppen en menu's (de feitjes-API blijft Engels).";
+                headers[2].textContent = "Fabrieksinstellingen";
+                paragraphs[2].textContent = "Wis alle opgeslagen voorkeuren en zet de website terug naar de basis.";
+                resetBtn.textContent = "Reset Instellingen";
+            }
+        }
+
+        function resetSettings() {
+            if (confirm("Weet je zeker dat je alle instellingen wilt resetten?")) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((reg) => console.log('SW: Succesvol geregistreerd!', reg.scope))
+                    .catch((err) => console.error('SW: Registratie mislukt:', err));
+            });
+        }
+
+        let deInstallatiePrompt;
+
+        const installatieKnop = document.getElementById('pwa-install-btn');
+
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            deInstallatiePrompt = event;
+            if (installatieKnop) {
+                installatieKnop.style.display = 'inline-block';
+            }
+        });
+
+        if (installatieKnop) {
+            installatieKnop.addEventListener('click', async () => {
+                if (!deInstallatiePrompt) return;
+                deInstallatiePrompt.prompt();
+                const { outcome } = await deInstallatiePrompt.userChoice;
+                console.log(`Gebruiker koos voor: ${outcome}`);
+                deInstallatiePrompt = null;
+                installatieKnop.style.display = 'none';
+            });
+        }
+
+        window.addEventListener('appinstalled', () => {
+            console.log('App is succesvol geïnstalleerd!');
+            if (installatieKnop) {
+                installatieKnop.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

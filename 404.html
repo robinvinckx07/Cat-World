@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cat World - 404</title>
+    <link rel="stylesheet" href="CSS/header_footer.css">
+    <link rel="icon" type="image/x-icon" href="/img/Cat_World_Icon.ico">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #fcfcfc;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        h1 { font-size: 6rem; color: #ff6600; margin: 0; }
+        h2 { color: #ff6600; margin: 10px 0 20px 0; }
+        p { color: #666666; margin-bottom: 30px; font-size: 1.1rem; }
+        .home-btn {
+            display: inline-block;
+            background-color: #ff6600;
+            color: #ffffff;
+            text-decoration: none;
+            padding: 14px 35px;
+            font-weight: bold;
+            border-radius: 30px;
+            transition: transform 0.3s;
+        }
+        .home-btn:hover { transform: translateY(-3px); }
+        body.dark-theme { background-color: #121212; color: #e0e0e0; }
+        body.dark-theme p { color: #aaaaaa; }
+    </style>
+</head>
+<body>
+    <h1>404</h1>
+    <h2>Oeps! Pagina niet gevonden</h2>
+    <p>Deze kat lijkt te zijn ontsnapt... De pagina die je zoekt bestaat niet.</p>
+    <a href="/" class="home-btn">Terug naar Home</a>
+    <script>
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            document.body.classList.add('dark-theme');
+        }
+    </script>
+</body>
+</html>

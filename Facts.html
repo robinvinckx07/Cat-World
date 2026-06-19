@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="CSS/style_facts.css">
+    <link rel="stylesheet" href="CSS/header_footer.css">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/x-icon" href="/img/Cat_World_Icon.ico">
+    <title>Cat World - Facts & Breeds</title>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="header-container">
+            <a href="/" class="logo">Cat <span>World</span> 🐱</a>
+            <nav class="nav-menu">
+                <a href="/" class="nav-item">Home</a>
+                <a href="/Facts.html" class="nav-item">Feitjes & Rassen</a>
+                <a href="/Opties.html" class="nav-item">Opties</a>
+                <button id="pwa-install-btn" class="nav-item install-btn" style="display: none;">Installeer App</button>
+            </nav>
+        </div>
+    </header>
+
+    <h1>Cat World 🐱</h1>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('facts-tab')">Kattenfeitjes</button>
+        <button class="tab-btn" onclick="switchTab('breeds-tab'); triggerBreedsLoad();">Kattenrassen</button>
+    </div>
+
+    <div id="facts-tab" class="tab-content active">
+        
+        <div class="carousel-container">
+            <div id="facts-results">
+                <p class='status-msg'>Feitje aan het laden... 🐱</p>
+            </div>
+
+            <div class="carousel-controls">
+                <button id="prev-fact-btn" class="carousel-btn" onclick="showPreviousFact()" disabled>« Vorig Feitje</button>
+                <button id="next-fact-btn" class="carousel-btn primary" onclick="fetchNextFact()">Volgend Feitje »</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="breeds-tab" class="tab-content">
+        <div class="search-box" id="breeds-search-container">
+            <input type="text" id="breeds-search" placeholder="Zoek wereldwijd tussen ALLE rassen of landen..." oninput="filterBreeds()">
+        </div>
+
+        <div id="breeds-results" class="breeds-grid"></div>
+
+        <div class="pagination" id="breeds-pagination" style="display: none;">
+            <button onclick="changeBreedsPage(-1)">« Vorige</button>
+            <span id="breeds-page-num">Pagina 1</span>
+            <button onclick="changeBreedsPage(1)">Volgende »</button>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="footer-container">
+            <p id="footer-text">&copy; Gemaakt door Robin Vinckx 🐾</p>
+        </div>
+    </footer>
+
+    <script>
+        let factsHistory = [];  
+        let historyIndex = -1;  
+
+        let currentBreedsPage = 1;
+        let masterBreedsList = []; 
+        let isSearching = false;   
+        const breedsPerPage = 20;
+        let currentLang = 'nl'; 
+
+        window.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-theme');
+            }
+
+            currentLang = localStorage.getItem('siteLanguage') || 'nl';
+            vertaalFactsPagina(currentLang);
+            vertaalNavigatie(currentLang);
+            vertaalFooter(currentLang);
+
+            fetchNextFact();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const activeTab = urlParams.get('tab');
+            if (activeTab === 'breeds') {
+                switchTab('breeds-tab');
+                triggerBreedsLoad();
+            }
+        });
+
+        function vertaalNavigatie(lang) {
+            const navItems = document.querySelectorAll('.nav-menu .nav-item');
+            const installBtn = document.getElementById('pwa-install-btn');
+            if (lang === 'en' && navItems.length >= 3) {
+                navItems[0].textContent = "Home";
+                navItems[1].textContent = "Facts & Breeds";
+                navItems[2].textContent = "Settings";
+                if (installBtn) installBtn.textContent = "Install App";
+            }
+        }
+
+        function vertaalFooter(lang) {
+            const footerP = document.getElementById('footer-text');
+            if (lang === 'en' && footerP) {
+                footerP.innerHTML = "&copy; Made by Robin Vinckx 🐾";
+            }
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            const btnIndex = tabId === 'facts-tab' ? 0 : 1;
+            document.querySelectorAll('.tab-btn')[btnIndex].classList.add('active');
+        }
+
+        function triggerBreedsLoad() {
+            if (masterBreedsList.length === 0) getAllBreeds();
+        }
+
+        function vertaalFactsPagina(lang) {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const breedsSearch = document.getElementById('breeds-search');
+            const prevFactBtn = document.getElementById('prev-fact-btn');
+            const nextFactBtn = document.getElementById('next-fact-btn');
+            const prevBreedsBtn = document.querySelector('#breeds-pagination button:nth-child(1)');
+            const nextBreedsBtn = document.querySelector('#breeds-pagination button:nth-child(3)');
+
+            if (lang === 'en') {
+                tabBtns[0].textContent = "Cat Facts";
+                tabBtns[1].textContent = "Cat Breeds";
+                breedsSearch.placeholder = "Search worldwide between ALL breeds or countries...";
+                prevFactBtn.textContent = "« Previous Fact";
+                nextFactBtn.textContent = "Next Fact »";
+                if (prevBreedsBtn) prevBreedsBtn.textContent = "« Previous";
+                if (nextBreedsBtn) nextBreedsBtn.textContent = "Next »";
+            }
+        }
+
+        async function fetchNextFact() {
+            const results = document.getElementById("facts-results");
+            
+            if (historyIndex < factsHistory.length - 1) {
+                historyIndex++;
+                renderSingleFact(factsHistory[historyIndex]);
+                updateCarouselButtons();
+                return;
+            }
+
+            results.innerHTML = currentLang === 'en' ? "<p class='status-msg'>Hunting for a fact... 🐱</p>" : "<p class='status-msg'>Feitje aan het jagen... 🐱</p>";
+
+            try {
+                const res = await fetch(`https://catfact.ninja/fact`);
+                const data = await res.json();
+
+                if (data && data.fact) {
+                    factsHistory.push(data.fact);
+                    historyIndex = factsHistory.length - 1;
+                    renderSingleFact(data.fact);
+                }
+            } catch (err) {
+                results.innerHTML = "<p class='status-msg error'>Oeps! Kon geen feitje laden.</p>";
+            }
+            
+            updateCarouselButtons();
+        }
+
+        function showPreviousFact() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                renderSingleFact(factsHistory[historyIndex]);
+                updateCarouselButtons();
+            }
+        }
+
+        function renderSingleFact(factText) {
+            const results = document.getElementById("facts-results");
+            results.innerHTML = ""; 
+            
+            const p = document.createElement("p");
+            p.className = "fact-card carousel-fact";
+            p.textContent = factText;
+            results.appendChild(p);
+        }
+
+        function updateCarouselButtons() {
+            const prevBtn = document.getElementById("prev-fact-btn");
+            prevBtn.disabled = (historyIndex <= 0);
+        }
+
+        async function getAllBreeds() {
+            const results = document.getElementById("breeds-results");
+            results.innerHTML = currentLang === 'en' ? "<p class='status-msg'>Gathering all breeds... 🐾</p>" : "<p class='status-msg'>Alle kattenrassen verzamelen... 🐾</p>";
+
+            try {
+                const res = await fetch(`https://catfact.ninja/breeds?limit=100`);
+                const data = await res.json();
+                masterBreedsList = data.data;
+                displayBreedsPage(1);
+            } catch (err) {
+                results.innerHTML = "<p class='status-msg error'>Error.</p>";
+            }
+        }
+
+        function displayBreedsPage(page) {
+            currentBreedsPage = page;
+            isSearching = false;
+            const startIndex = (page - 1) * breedsPerPage;
+            const pageBreeds = masterBreedsList.slice(startIndex, startIndex + breedsPerPage);
+
+            renderBreeds(pageBreeds);
+
+            const totalPages = Math.ceil(masterBreedsList.length / breedsPerPage);
+            const pageWord = currentLang === 'en' ? 'Page' : 'Pagina';
+            const ofWord = currentLang === 'en' ? 'of' : 'van';
+            document.getElementById("breeds-page-num").textContent = `${pageWord} ${currentBreedsPage} ${ofWord} ${totalPages}`;
+            document.getElementById("breeds-pagination").style.display = "flex";
+        }
+
+        function renderBreeds(breedsArray) {
+            const results = document.getElementById("breeds-results");
+            results.innerHTML = "";
+
+            if (breedsArray.length === 0) {
+                results.innerHTML = "<p class='status-msg'>No results found.</p>";
+                return;
+            }
+
+            breedsArray.forEach(cat => {
+                const encodedBreed = encodeURIComponent(cat.breed);
+                const wikipediaLink = `https://en.wikipedia.org/wiki/${encodedBreed.replace(/%20/g, '_')}_cat`;
+                const googleImagesLink = `https://www.google.com/search?tbm=isch&q=${encodedBreed}+cat`;
+
+                const labelCountry = currentLang === 'en' ? 'Country' : 'Land';
+                const labelCoat = currentLang === 'en' ? 'Coat' : 'Vacht';
+                const labelPattern = currentLang === 'en' ? 'Pattern' : 'Patroon';
+
+                const card = document.createElement("div");
+                card.className = "breed-card";
+                card.innerHTML = `
+                    <h3>${cat.breed}</h3>
+                    <p><strong>${labelCountry}:</strong> ${cat.country || 'Unknown'}</p>
+                    <p><strong>${labelCoat}:</strong> ${cat.coat}</p>
+                    <p><strong>${labelPattern}:</strong> ${cat.pattern}</p>
+                    <div class="breed-links">
+                        <a href="${wikipediaLink}" target="_blank" class="breed-link wiki">📖 Info</a>
+                        <a href="${googleImagesLink}" target="_blank" class="breed-link google">📷 Foto's</a>
+                    </div>
+                `;
+                results.appendChild(card);
+            });
+        }
+
+        function filterBreeds() {
+            const term = document.getElementById("breeds-search").value.toLowerCase().trim();
+            if (term === "") { displayBreedsPage(currentBreedsPage); return; }
+            
+            isSearching = true;
+            document.getElementById("breeds-pagination").style.display = "none";
+            const filtered = masterBreedsList.filter(cat => 
+                cat.breed.toLowerCase().includes(term) || (cat.country && cat.country.toLowerCase().includes(term))
+            );
+            renderBreeds(filtered);
+        }
+
+        function changeBreedsPage(dir) { if (!isSearching) changePageSafe('breeds', dir); }
+
+        document.getElementById("breeds-search").addEventListener("input", filterBreeds);
+
+        function changePageSafe(type, direction) {
+            if (type === 'breeds') {
+                const target = currentBreedsPage + direction;
+                const totalPages = Math.ceil(masterBreedsList.length / breedsPerPage);
+                if (target >= 1 && target <= totalPages) displayBreedsPage(target);
+            }
+        }
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((reg) => console.log('SW: Succesvol geregistreerd!', reg.scope))
+                    .catch((err) => console.error('SW: Registratie mislukt:', err));
+            });
+        }
+
+        let deInstallatiePrompt;
+
+        const installatieKnop = document.getElementById('pwa-install-btn');
+
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            deInstallatiePrompt = event;
+            if (installatieKnop) {
+                installatieKnop.style.display = 'inline-block';
+            }
+        });
+
+        if (installatieKnop) {
+            installatieKnop.addEventListener('click', async () => {
+                if (!deInstallatiePrompt) return;
+                deInstallatiePrompt.prompt();
+                const { outcome } = await deInstallatiePrompt.userChoice;
+                console.log(`Gebruiker koos voor: ${outcome}`);
+                deInstallatiePrompt = null;
+                installatieKnop.style.display = 'none';
+            });
+        }
+
+        window.addEventListener('appinstalled', () => {
+            console.log('App is succesvol geïnstalleerd!');
+            if (installatieKnop) {
+                installatieKnop.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
