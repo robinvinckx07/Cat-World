@@ -5,19 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="CSS/opties.css">
     <link rel="stylesheet" href="CSS/header_footer.css">
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/x-icon" href="/img/Cat_World_Icon.ico">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/x-icon" href="img/Cat_World_Icon.ico">
     <title>Cat World - Opties</title>
 </head>
 <body>
 
     <header class="main-header">
         <div class="header-container">
-            <a href="/" class="logo">Cat <span>World</span> 🐱</a>
+            <a href="./" class="logo">Cat <span>World</span> 🐱</a>
             <nav class="nav-menu">
-                <a href="/" class="nav-item">Home</a>
-                <a href="/Facts.html" class="nav-item">Feitjes & Rassen</a>
-                <a href="/Opties.html" class="nav-item">Opties</a>
+                <a href="./" class="nav-item">Home</a>
+                <a href="Facts.html" class="nav-item">Feitjes & Rassen</a>
+                <a href="Opties.html" class="nav-item">Opties</a>
                 <button id="pwa-install-btn" class="nav-item install-btn" style="display: none;">Installeer App</button>
             </nav>
         </div>
@@ -167,7 +167,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
+                navigator.serviceWorker.register('sw.js')
                     .then((reg) => console.log('SW: Succesvol geregistreerd!', reg.scope))
                     .catch((err) => console.error('SW: Registratie mislukt:', err));
             });

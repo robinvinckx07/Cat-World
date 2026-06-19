@@ -3,19 +3,19 @@ const CACHE_NAAM = 'cat-world-cache-v1';
 
 // Bestanden voor offline gebruik.
 const TE_CACHEN_BESTANDEN = [
-  '/',
-  '/index.html',
-  '/Facts.html',
-  '/Opties.html',
-  '/404.html',
-  '/manifest.json',
-  '/CSS/header_footer.css',
-  '/CSS/Home.css',
-  '/CSS/opties.css',
-  '/CSS/style_facts.css',
-  '/img/Logo_192x192.png',
-  '/img/Logo_512x512.png',
-  '/img/Cat_World_Icon.ico'
+  './',
+  'index.html',
+  'Facts.html',
+  'Opties.html',
+  '404.html',
+  'manifest.json',
+  'CSS/header_footer.css',
+  'CSS/Home.css',
+  'CSS/opties.css',
+  'CSS/style_facts.css',
+  'img/Logo_192x192.png',
+  'img/Logo_512x512.png',
+  'img/Cat_World_Icon.ico'
 ];
 
 // Service Worker installeren.

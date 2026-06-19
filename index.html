@@ -5,20 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="CSS/Home.css">
     <link rel="stylesheet" href="CSS/header_footer.css">
-    <link rel="manifest" href="/manifest.json">
+    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#ff6600">
-    <link rel="icon" type="image/x-icon" href="/img/Cat_World_Icon.ico">
+    <link rel="icon" type="image/x-icon" href="img/Cat_World_Icon.ico">
     <title>Cat World - Home</title>
 </head>
 <body>
 
     <header class="main-header">
         <div class="header-container">
-            <a href="/" class="logo">Cat <span>World</span> 🐱</a>
+            <a href="./" class="logo">Cat <span>World</span> 🐱</a>
             <nav class="nav-menu">
-                <a href="/" class="nav-item">Home</a>
-                <a href="/Facts.html" class="nav-item">Feitjes & Rassen</a>
-                <a href="/Opties.html" class="nav-item">Opties</a>
+                <a href="./" class="nav-item">Home</a>
+                <a href="Facts.html" class="nav-item">Feitjes & Rassen</a>
+                <a href="Opties.html" class="nav-item">Opties</a>
                 <button id="pwa-install-btn" class="nav-item install-btn" style="display: none;">Installeer App</button>
             </nav>
         </div>
@@ -28,7 +28,7 @@
         <div class="hero-content">
             <h1>Welkom bij Cat World 🐱</h1>
             <p>Ontdek de meest fascinerende feitjes en leer alles over verschillende kattenrassen van over de hele wereld. Jouw ultieme gids in de wereld van de kat!</p>
-            <a href="/Facts.html" class="cta-btn">Begin met Ontdekken</a>
+            <a href="Facts.html" class="cta-btn">Begin met Ontdekken</a>
         </div>
     </section>
 
@@ -37,20 +37,20 @@
         
         <div class="feature-grid">
             <div class="feature-card">
-                <div class="card-image" style="background-image: url('/img/HomeToFacts.avif');"></div>
+                <div class="card-image" style="background-image: url('img/HomeToFacts.avif');"></div>
                 <div class="card-content">
                     <h3>Kattenfeitjes Jagen</h3>
                     <p>Wist je dat katten 70% van hun leven slapend doorbrengen? haal grappige en bizarre kattenfeitjes op.</p>
-                    <a href="/Facts.html" class="card-link">Naar de Feitjes →</a>
+                    <a href="Facts.html" class="card-link">Naar de Feitjes →</a>
                 </div>
             </div>
 
             <div class="feature-card">
-                <div class="card-image" style="background-image: url('/img/HomeToBreeds.avif');"></div>
+                <div class="card-image" style="background-image: url('img/HomeToBreeds.avif');"></div>
                 <div class="card-content">
                     <h3>Rassen Database</h3>
                     <p>Blader door een complete bibliotheek van kattenrassen. Ontdek hun land van herkomst, jastypes en bekijk direct foto's via onze slimme links.</p>
-                    <a href="/Facts.html?tab=breeds" class="card-link">Bekijk Rassen →</a>
+                    <a href="Facts.html?tab=breeds" class="card-link">Bekijk Rassen →</a>
                 </div>
             </div>
         </div>
@@ -123,7 +123,7 @@
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
+                navigator.serviceWorker.register('sw.js')
                     .then((reg) => console.log('SW: Succesvol geregistreerd!', reg.scope))
                     .catch((err) => console.error('SW: Registratie mislukt:', err));
             });
