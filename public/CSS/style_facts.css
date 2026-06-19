@@ -1,0 +1,114 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fcfcfc;
+  color: #333333;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  align-items: center;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body > *:not(header):not(footer) { width: 90%; max-width: 850px; }
+
+h1 { color: #ff6600; text-align: center; margin-top: 30px; font-size: 2.5rem; }
+
+.tabs { display: flex; justify-content: center; margin-bottom: 40px; border-bottom: 2px solid #dddddd; }
+
+.tab-btn {
+  background: none; border: none; padding: 12px 30px; font-size: 16px;
+  font-weight: bold; color: #666666; cursor: pointer; transition: all 0.3s;
+}
+.tab-btn.active { color: #ff6600; border-bottom: 4px solid #ff6600; }
+
+.tab-content { display: none; width: 100%; }
+.tab-content.active { display: block; }
+
+/* ================= CARROUSEL STYLING ================= */
+.carousel-container {
+  max-width: 650px;
+  margin: 40px auto 140px auto;
+  text-align: center;
+}
+
+.carousel-fact {
+  font-size: 1.3rem;
+  line-height: 1.6;
+  padding: 35px 30px !important;
+  border-radius: 12px !important;
+  background-color: #ffffff;
+  border-left: 6px solid #ff6600;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06) !important;
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.carousel-controls {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.carousel-btn {
+  padding: 12px 24px;
+  font-size: 15px;
+  font-weight: bold;
+  border-radius: 25px;
+  border: 2px solid #ff6600;
+  background-color: #ffffff;
+  color: #ff6600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.carousel-btn.primary {
+  background-color: #ff6600;
+  color: #ffffff;
+}
+
+.carousel-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(255, 102, 0, 0.2);
+}
+
+.carousel-btn:disabled {
+  border-color: #cccccc;
+  color: #bbbbbb;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ================= RASSEN GRID & ZOEKBALK ================= */
+.search-box { margin-bottom: 25px; }
+.search-box input { width: 100%; padding: 12px 20px; border: 2px solid #ff6600; border-radius: 25px; outline: none; box-sizing: border-box; }
+
+.breeds-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; margin-bottom: 30px; }
+.breed-card { background-color: #ffffff; border-top: 4px solid #ff6600; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between; }
+.breed-card h3 { color: #ff6600; margin: 0 0 10px 0; }
+
+.breed-links { display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid #eeeeee; padding-top: 12px; }
+.breed-link { flex: 1; text-align: center; text-decoration: none; font-size: 13px; font-weight: bold; padding: 8px 5px; border-radius: 6px; }
+.breed-link.wiki { background-color: #ffffff; color: #ff6600; border: 1px solid #ff6600; }
+.breed-link.google { background-color: #ff6600; color: #ffffff; }
+
+.pagination { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 20px; margin-bottom: 120px; }
+.pagination button { background-color: #ff6600; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+.status-msg { text-align: center; font-weight: bold; color: #666666; margin: 20px 0; }
+
+/* ================= DARK MODE STYLEN ================= */
+body.dark-theme { background-color: #121212; color: #e0e0e0; }
+body.dark-theme .carousel-fact, body.dark-theme .breed-card { background-color: #1e1e1e; color: #ffffff; box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4) !important; }
+body.dark-theme .search-box input { background-color: #2d2d2d; color: #ffffff; border-color: #444444; }
+body.dark-theme .carousel-btn { background-color: #1e1e1e; }
+body.dark-theme .carousel-btn.primary { background-color: #ff6600; }
+body.dark-theme .carousel-btn:disabled { border-color: #444444; color: #555555; background-color: #121212; }
+body.dark-theme .breed-link.wiki { background-color: #1e1e1e; color: #ff6600; }
+body.dark-theme .tab-btn { color: #888888; }
+body.dark-theme .tab-btn.active { color: #ff6600; }

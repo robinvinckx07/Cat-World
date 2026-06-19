@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="CSS/style_facts.css">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/x-icon" href="/img/Cat_World_Icon.ico">
+    <title>Cat World - Facts & Breeds</title>
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <h1>Cat World 🐱</h1>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('facts-tab')">Kattenfeitjes</button>
+        <button class="tab-btn" onclick="switchTab('breeds-tab'); triggerBreedsLoad();">Kattenrassen</button>
+    </div>
+
+    <div id="facts-tab" class="tab-content active">
+        
+        <div class="carousel-container">
+            <div id="facts-results">
+                <p class='status-msg'>Feitje aan het laden... 🐱</p>
+            </div>
+
+            <div class="carousel-controls">
+                <button id="prev-fact-btn" class="carousel-btn" onclick="showPreviousFact()" disabled>« Vorig Feitje</button>
+                <button id="next-fact-btn" class="carousel-btn primary" onclick="fetchNextFact()">Volgend Feitje »</button>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="breeds-tab" class="tab-content">
+        <div class="search-box" id="breeds-search-container">
+            <input type="text" id="breeds-search" placeholder="Zoek wereldwijd tussen ALLE rassen of landen..." oninput="filterBreeds()">
+        </div>
+
+        <div id="breeds-results" class="breeds-grid"></div>
+
+        <div class="pagination" id="breeds-pagination" style="display: none;">
+            <button onclick="changeBreedsPage(-1)">« Vorige</button>
+            <span id="breeds-page-num">Pagina 1</span>
+            <button onclick="changeBreedsPage(1)">Volgende »</button>
+        </div>
+    </div>
+
+    <%- include('partials/footer') %>
+
+    <script>
+        // --- DATA OPSLAG ---
+        // Slaat geladen feitjes op voor de 'vorige' knop
+        let factsHistory = [];  
+        let historyIndex = -1;  
+
+        // Rassen data: lijst en paginering variabelen
+        let currentBreedsPage = 1;
+        let masterBreedsList = []; 
+        let isSearching = false;   
+        const breedsPerPage = 20;
+        let currentLang = 'nl'; 
+
+        // --- INITIALISATIE ---
+        window.addEventListener('DOMContentLoaded', () => {
+            // Dark mode: controleer opgeslagen voorkeur in localStorage
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-theme');
+            }
+
+            // Taalinstelling laden en teksten vertalen
+            currentLang = localStorage.getItem('siteLanguage') || 'nl';
+            vertaalFactsPagina(currentLang);
+
+            // Haal het eerste feitje op bij het laden van de pagina
+            fetchNextFact();
+
+            // Direct naar 'breeds' tab gaan als dit via een URL parameter is gevraagd
+            const urlParams = new URLSearchParams(window.location.search);
+            const activeTab = urlParams.get('tab');
+            if (activeTab === 'breeds') {
+                switchTab('breeds-tab');
+                triggerBreedsLoad();
+            }
+        });
+
+        // Tab-functionaliteit: toont het gekozen tabblad en verbergt de rest
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            const btnIndex = tabId === 'facts-tab' ? 0 : 1;
+            document.querySelectorAll('.tab-btn')[btnIndex].classList.add('active');
+        }
+
+        // Lazy loading: haal rassen alleen op als ze nog niet in het geheugen staan
+        function triggerBreedsLoad() {
+            if (masterBreedsList.length === 0) getAllBreeds();
+        }
+
+        // Vertaal UI-elementen gebaseerd op taalcode (en/nl)
+        function vertaalFactsPagina(lang) {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const breedsSearch = document.getElementById('breeds-search');
+            const prevFactBtn = document.getElementById('prev-fact-btn');
+            const nextFactBtn = document.getElementById('next-fact-btn');
+            const prevBreedsBtn = document.querySelector('#breeds-pagination button:nth-child(1)');
+            const nextBreedsBtn = document.querySelector('#breeds-pagination button:nth-child(3)');
+
+            if (lang === 'en') {
+                tabBtns[0].textContent = "Cat Facts";
+                tabBtns[1].textContent = "Cat Breeds";
+                breedsSearch.placeholder = "Search worldwide between ALL breeds or countries...";
+                prevFactBtn.textContent = "« Previous Fact";
+                nextFactBtn.textContent = "Next Fact »";
+                if (prevBreedsBtn) prevBreedsBtn.textContent = "« Previous";
+                if (nextBreedsBtn) nextBreedsBtn.textContent = "Next »";
+            }
+        }
+
+        // --- FEITJES CARROUSEL ---
+        
+        // Haal een nieuw feitje op via API of navigeer in historie
+        async function fetchNextFact() {
+            const results = document.getElementById("facts-results");
+            
+            // Als we terug in de tijd zijn gebladerd, navigeer dan door de historie
+            if (historyIndex < factsHistory.length - 1) {
+                historyIndex++;
+                renderSingleFact(factsHistory[historyIndex]);
+                updateCarouselButtons();
+                return;
+            }
+
+            // Statusmelding tijdens het laden van de API-data
+            results.innerHTML = currentLang === 'en' ? "<p class='status-msg'>Hunting for a fact... 🐱</p>" : "<p class='status-msg'>Feitje aan het jagen... 🐱</p>";
+
+            try {
+                // API-call naar catfact.ninja
+                const res = await fetch(`https://catfact.ninja/fact`);
+                const data = await res.json();
+
+                if (data && data.fact) {
+                    // Voeg toe aan geschiedenis-geheugen
+                    factsHistory.push(data.fact);
+                    historyIndex = factsHistory.length - 1;
+                    renderSingleFact(data.fact);
+                }
+            } catch (err) {
+                results.innerHTML = "<p class='status-msg error'>Oeps! Kon geen feitje laden.</p>";
+            }
+            
+            updateCarouselButtons();
+        }
+
+        // Navigeer terug in de 'factsHistory' array
+        function showPreviousFact() {
+            if (historyIndex > 0) {
+                historyIndex--;
+                renderSingleFact(factsHistory[historyIndex]);
+                updateCarouselButtons();
+            }
+        }
+
+        // Render één specifiek feitje in de DOM
+        function renderSingleFact(factText) {
+            const results = document.getElementById("facts-results");
+            results.innerHTML = ""; 
+            
+            const p = document.createElement("p");
+            p.className = "fact-card carousel-fact";
+            p.textContent = factText;
+            results.appendChild(p);
+        }
+
+        // Schakel de 'vorige' knop uit als er geen historie meer is
+        function updateCarouselButtons() {
+            const prevBtn = document.getElementById("prev-fact-btn");
+            prevBtn.disabled = (historyIndex <= 0);
+        }
+
+        // --- RASSEN LOGICA ---
+        
+        // Haal alle rassen op van de API
+        async function getAllBreeds() {
+            const results = document.getElementById("breeds-results");
+            results.innerHTML = currentLang === 'en' ? "<p class='status-msg'>Gathering all breeds... 🐾</p>" : "<p class='status-msg'>Alle kattenrassen verzamelen... 🐾</p>";
+
+            try {
+                const res = await fetch(`https://catfact.ninja/breeds?limit=100`);
+                const data = await res.json();
+                masterBreedsList = data.data; // Data opslaan in de masterlijst
+                displayBreedsPage(1);
+            } catch (err) {
+                results.innerHTML = "<p class='status-msg error'>Error.</p>";
+            }
+        }
+
+        // Verdeel rassen over pagina's en render de actieve pagina
+        function displayBreedsPage(page) {
+            currentBreedsPage = page;
+            isSearching = false;
+            const startIndex = (page - 1) * breedsPerPage;
+            const pageBreeds = masterBreedsList.slice(startIndex, startIndex + breedsPerPage);
+
+            renderBreeds(pageBreeds);
+
+            // Update paginering-informatie
+            const totalPages = Math.ceil(masterBreedsList.length / breedsPerPage);
+            const pageWord = currentLang === 'en' ? 'Page' : 'Pagina';
+            const ofWord = currentLang === 'en' ? 'of' : 'van';
+            document.getElementById("breeds-page-num").textContent = `${pageWord} ${currentBreedsPage} ${ofWord} ${totalPages}`;
+            document.getElementById("breeds-pagination").style.display = "flex";
+        }
+
+        // Genereer de HTML kaarten voor elk ras
+        function renderBreeds(breedsArray) {
+            const results = document.getElementById("breeds-results");
+            results.innerHTML = "";
+
+            if (breedsArray.length === 0) {
+                results.innerHTML = "<p class='status-msg'>No results found.</p>";
+                return;
+            }
+
+            breedsArray.forEach(cat => {
+                const encodedBreed = encodeURIComponent(cat.breed);
+                const wikipediaLink = `https://en.wikipedia.org/wiki/${encodedBreed.replace(/%20/g, '_')}_cat`;
+                const googleImagesLink = `https://www.google.com/search?tbm=isch&q=${encodedBreed}+cat`;
+
+                const labelCountry = currentLang === 'en' ? 'Country' : 'Land';
+                const labelCoat = currentLang === 'en' ? 'Coat' : 'Vacht';
+                const labelPattern = currentLang === 'en' ? 'Pattern' : 'Patroon';
+
+                const card = document.createElement("div");
+                card.className = "breed-card";
+                card.innerHTML = `
+                    <h3>${cat.breed}</h3>
+                    <p><strong>${labelCountry}:</strong> ${cat.country || 'Unknown'}</p>
+                    <p><strong>${labelCoat}:</strong> ${cat.coat}</p>
+                    <p><strong>${labelPattern}:</strong> ${cat.pattern}</p>
+                    <div class="breed-links">
+                        <a href="${wikipediaLink}" target="_blank" class="breed-link wiki">📖 Info</a>
+                        <a href="${googleImagesLink}" target="_blank" class="breed-link google">📷 Foto's</a>
+                    </div>
+                `;
+                results.appendChild(card);
+            });
+        }
+
+        // Filter masterlijst op zoekterm en update view
+        function filterBreeds() {
+            const term = document.getElementById("breeds-search").value.toLowerCase().trim();
+            if (term === "") { displayBreedsPage(currentBreedsPage); return; }
+            
+            isSearching = true;
+            document.getElementById("breeds-pagination").style.display = "none";
+            const filtered = masterBreedsList.filter(cat => 
+                cat.breed.toLowerCase().includes(term) || (cat.country && cat.country.toLowerCase().includes(term))
+            );
+            renderBreeds(filtered);
+        }
+
+        // Paginering navigatie (vorige/volgende)
+        function changeBreedsPage(dir) { if (!isSearching) changePageSafe('breeds', dir); }
+
+        document.getElementById("breeds-search").addEventListener("input", filterBreeds);
+
+        // Veilige paginawissel: controleer of we niet buiten de bounds gaan
+        function changePageSafe(type, direction) {
+            if (type === 'breeds') {
+                const target = currentBreedsPage + direction;
+                const totalPages = Math.ceil(masterBreedsList.length / breedsPerPage);
+                if (target >= 1 && target <= totalPages) displayBreedsPage(target);
+            }
+        }
+    </script>
+</body>
+</html>

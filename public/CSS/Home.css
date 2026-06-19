@@ -1,0 +1,130 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fcfcfc;
+  color: #333333;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.hero {
+  background: linear-gradient(135deg, #ff6600 0%, #ff9933 100%);
+  color: #ffffff;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.hero p {
+  font-size: 1.2rem;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.cta-btn {
+  display: inline-block;
+  background-color: #ffffff;
+  color: #ff6600;
+  text-decoration: none;
+  padding: 14px 35px;
+  font-weight: bold;
+  border-radius: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.cta-btn:hover {
+  transform: translateY(-3px);
+}
+
+.main-features {
+  max-width: 900px;
+  width: 90%;
+  margin: 50px auto 140px auto;
+  text-align: center;
+}
+
+.main-features h2 {
+  color: #ff6600;
+  font-size: 2rem;
+  margin-bottom: 40px;
+}
+
+.feature-grid {
+  display: flex;
+  gap: 30px;
+}
+
+.feature-card {
+  background-color: #ffffff;
+  flex: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s, background-color 0.3s;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+}
+
+.card-image {
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+}
+
+.card-content {
+  padding: 25px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex-grow: 1;
+}
+
+.card-content h3 {
+  color: #ff6600;
+  margin-bottom: 12px;
+}
+
+.card-content p {
+  color: #666666;
+  font-size: 15px;
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.card-link {
+  color: #ff6600;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* DARK MODE OVERRIDES FOR HOME */
+body.dark-theme {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+body.dark-theme .feature-card {
+  background-color: #1e1e1e;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+body.dark-theme .card-content p {
+  color: #aaaaaa;
+}
+
+@media (max-width: 768px) {
+  .feature-grid { flex-direction: column; }
+}

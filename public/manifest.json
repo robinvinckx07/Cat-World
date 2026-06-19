@@ -1,0 +1,54 @@
+{
+  "name": "Cat World",
+  "short_name": "Cat World",
+  "description": "Leuke kattenfeitjes en een database van kattenrassen.",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#ff6600",
+  "background_color": "#ffffff",
+  "lang": "nl",
+  "orientation": "portrait",
+  "id": "/?source=pwa",
+  "icons": [
+    {
+      "src": "/img/Logo_192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/img/Logo_512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/img/Logo_192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/img/Logo_512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/img/screenshot_mobile.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Cat World op een smartphone"
+    },
+    {
+      "src": "/img/screenshot_desktop.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Cat World op desktop"
+    }
+  ]
+}

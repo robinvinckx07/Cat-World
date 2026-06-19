@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="CSS\Home.css">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#ff6600">
+    <link rel="icon" type="image/x-icon" href="/img/Cat_World_Icon.ico">
+    <title>Cat World - Home</title>
+</head>
+<body>
+
+    <%- include('partials/header') %>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Welkom bij Cat World 🐱</h1>
+            <p>Ontdek de meest fascinerende feitjes en leer alles over verschillende kattenrassen van over de hele wereld. Jouw ultieme gids in de wereld van de kat!</p>
+            <a href="/Facts" class="cta-btn">Begin met Ontdekken</a>
+        </div>
+    </section>
+
+    <section class="main-features">
+        <h2>Wat kun je hier doen?</h2>
+        
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="card-image" style="background-image: url('/img/HomeToFacts.avif');"></div>
+                <div class="card-content">
+                    <h3>Kattenfeitjes Jagen</h3>
+                    <p>Wist je dat katten 70% van hun leven slapend doorbrengen? haal grappige en bizarre kattenfeitjes op.</p>
+                    <a href="/Facts" class="card-link">Naar de Feitjes →</a>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="card-image" style="background-image: url('/img/HomeToBreeds.avif');"></div>
+                <div class="card-content">
+                    <h3>Rassen Database</h3>
+                    <p>Blader door een complete bibliotheek van kattenrassen. Ontdek hun land van herkomst, jastypes en bekijk direct foto's via onze slimme links.</p>
+                    <a href="/Facts?tab=breeds" class="card-link">Bekijk Rassen →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <%- include('partials/footer') %>
+
+    <script>
+        // --- INITIALISATIE ---
+        window.addEventListener('DOMContentLoaded', () => {
+            // Controleer opgeslagen Dark Mode instelling
+            if (localStorage.getItem('darkMode') === 'enabled') {
+                document.body.classList.add('dark-theme');
+            }
+
+            // Haal de opgeslagen taal op (default naar NL) en vertaal de pagina
+            const savedLang = localStorage.getItem('siteLanguage') || 'nl';
+            vertaalHomePagina(savedLang);
+        });
+
+        // --- VERTALING ---
+        // Past alle teksten op de pagina aan naar de gekozen taal (indien EN)
+        function vertaalHomePagina(lang) {
+            const h1 = document.querySelector('.hero h1');
+            const heroP = document.querySelector('.hero p');
+            const ctaBtn = document.querySelector('.cta-btn');
+            const h2 = document.querySelector('.main-features h2');
+            
+            const kaartTitels = document.querySelectorAll('.card-content h3');
+            const kaartTeksten = document.querySelectorAll('.card-content p');
+            const kaartLinks = document.querySelectorAll('.card-link');
+
+            if (lang === 'en') {
+                // Vertaal teksten voor Hero sectie
+                h1.textContent = "Welcome to Cat World 🐱";
+                heroP.textContent = "Discover the most fascinating facts and learn all about different cat breeds from around the world. Your ultimate guide!";
+                ctaBtn.textContent = "Start Discovering";
+                h2.textContent = "What can you do here?";
+                
+                // Vertaal teksten voor Kaart 1 (Feitjes)
+                kaartTitels[0].textContent = "Hunting Cat Facts";
+                kaartTeksten[0].textContent = "Did you know cats spend 70% of their lives sleeping? fetch fun and unique cat facts.";
+                kaartLinks[0].textContent = "To the Facts →";
+
+                // Vertaal teksten voor Kaart 2 (Rassen)
+                kaartTitels[1].textContent = "Breeds Database";
+                kaartTeksten[1].textContent = "Browse through a complete library of cat breeds. Discover their country of origin and view photos.";
+                kaartLinks[1].textContent = "View Breeds →";
+            }
+        }
+    </script>
+</body>
+</html>

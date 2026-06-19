@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="CSS/header_footer.css">
+    <title>Header</title>
+  </head>
+  <body>
+    <header class="main-header">
+      <div class="header-container">
+          <a href="/" class="logo">Cat <span>World</span> 🐱</a>
+          
+          <nav class="nav-menu">
+              <a href="/" class="nav-item">Home</a>
+              <a href="/Facts" class="nav-item">Feitjes & Rassen</a>
+              <a href="/Opties" class="nav-item">Opties</a>
+              
+              <button id="pwa-install-btn" class="nav-item install-btn" style="display: none;">Installeer App</button>
+          </nav>
+      </div>
+    </header>
+
+    <script>
+    // Wacht tot de pagina geladen is.
+    window.addEventListener('DOMContentLoaded', () => {
+
+        // Haal de opgeslagen taal op.
+        const savedLang = localStorage.getItem('siteLanguage') || 'nl';
+
+        // Zoek de menu-items en installatieknop.
+        const navLinks = document.querySelectorAll('.nav-menu .nav-item');
+        const installBtn = document.getElementById('pwa-install-btn');
+        
+        // Pas de teksten aan voor Engels.
+        if (savedLang === 'en' && navLinks.length >= 3) {
+
+            // Vertaal de navigatie.
+            navLinks[0].textContent = "Home";
+            navLinks[1].textContent = "Facts & Breeds";
+            navLinks[2].textContent = "Settings";
+
+            // Vertaal de installatieknop.
+            if (installBtn) installBtn.textContent = "Install App";
+        }
+    });
+    </script>
+  </body>
+</html>
